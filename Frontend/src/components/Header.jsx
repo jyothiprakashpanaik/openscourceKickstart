@@ -1,4 +1,4 @@
-import { Divider, IconButton, makeStyles, Toolbar, Typography } from '@mui/material';
+import { Divider, IconButton, Toolbar, Typography } from '@mui/material';
 import Badge from '@mui/material/Badge';
 import MenuIcon from '@mui/icons-material/Menu';
 import NotificationsIcon from '@mui/icons-material/Notifications';

@@ -1,5 +1,5 @@
 import './App.css';
-import { Container, Divider, Grid, Typography } from '@mui/material';
+import { Container, Grid} from '@mui/material';
 import Header from './components/Header';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import FeaturedPost from './components/FeaturedPost';

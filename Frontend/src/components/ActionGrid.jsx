@@ -18,15 +18,16 @@ import TerminalIcon from '@mui/icons-material/Terminal';
 import LocalPoliceIcon from '@mui/icons-material/LocalPolice';
 import CommitIcon from '@mui/icons-material/Commit';
 import Groups3Icon from '@mui/icons-material/Groups3';
+import axios from 'axios';
 
 const bull = (
     <Box
-      component="span"
-      sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
+        component="span"
+        sx={{ display: 'inline-block', mx: '2px', transform: 'scale(0.8)' }}
     >
-      •
+        •
     </Box>
-  );
+);
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -92,11 +93,29 @@ function FromSection() {
         );
     };
 
+    const getApiData = () => {
+       
+        axios.get(
+            "http://127.0.0.1:5000/api",  
+            {
+                params: {
+                    prog: JSON.stringify(progName),
+                    key: JSON.stringify(keyName),
+            },  
+            }    
+        ).then((response) => {
+            setResultList(JSON.parse(response.data.result))
+        }
+        ); 
+    }
+
     const handleSubmit = () => {
         console.log(progName);
         console.log(keyName);
 
-        setResultList(tmpResults);
+        getApiData();
+
+        // setResultList(tmpResults);
     }
 
     return (
@@ -165,9 +184,9 @@ function FromSection() {
                         ))}
                     </Select>
                 </FormControl>
-                <Button variant="contained" disabled={progLangs.length == 0 || keyName.length == 0} onClick={handleSubmit}>Submit</Button>
+                <Button variant="contained" disabled={progLangs.length === 0 || keyName.length === 0} onClick={handleSubmit}>Submit</Button>
             </Card>
-            
+
             <Grid my={1}>
                 <ResultSet resultList={resultList} />
 
@@ -181,38 +200,42 @@ function ResultSet({ resultList }) {
 
     return (
         <Grid>
-            {resultList.map((repo) => {
+            {resultList.map((repo, index) => {
                 return (
-                <Card sx={{ minWidth: 275 }} variant="outlined" item spacing={1} style={{margin:"1% 0"}}>
-                    <CardContent>
-                        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-                         <Typography style={{display:"flex"}}>{repo.owner_name}</Typography>
-                        </Typography>
-                        <Link variant="h5" component="div" href={repo.github_repo_url}>
-                           <Typography> <GitHubIcon />  {repo.owner_repo_name} </Typography>
-                        </Link>
-                        <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                            <div style={{ display: "flex" }} >
-                                <Typography m={1} sx={{ display: "flex"}} variant="subtitle2"><StarIcon fontSize="small"/> {bull} {repo.count_of_stars}</Typography>
-                                <Typography m={1} sx={{ display: "flex"}} variant="subtitle2"><CommitIcon fontSize="small"/> {bull} {repo.count_commits}</Typography>
-                                <Typography m={1} sx={{ display: "flex"}} variant="subtitle2"><Groups3Icon fontSize="small"/> {bull} {repo.count_contributions}</Typography>
+                    <Card key={"card-"+index} sx={{ minWidth: 275 }} variant="outlined" item spacing={1} style={{ margin: "1% 0" }}>
+                        <CardContent>
+                            <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+                                <Typography style={{ display: "flex" }}>{repo.owner_name}</Typography>
+                            </Typography>
+                            <a href={repo.github_repo_url}>
 
-                                <Typography m={1} sx={{ display: "flex" }} variant="subtitle2"><TerminalIcon fontSize="small"/> {bull} {repo.primary_language_name}</Typography>
+                                <Link variant="h5" component="div">
+                                    <Typography> <GitHubIcon />  {repo.owner_repo_name} </Typography>
+                                </Link>
 
-                                <Typography m={1} sx={{ display: "flex" }} variant="subtitle2"><LocalPoliceIcon fontSize="small"/> {bull} {repo.license_name}</Typography>
-                                <Typography m={1} sx={{ display: "flex" }} variant="subtitle2"> Created {bull} {repo.repo_created_day}</Typography>
-                            </div>
-                        </Typography>
-                        <Typography variant="body2">
-                            {repo.repo_description}
-                            <br />
-                            '{repo.organization_bio}'
-                        </Typography>
-                    </CardContent>
-                    <CardActions>
-                        <Button size="small" href={repo.github_repo_url}>Learn More</Button>
-                    </CardActions>
-                </Card>
+                            </a>
+                            <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                                <div style={{ display: "flex" }} >
+                                    <Typography m={1} sx={{ display: "flex" }} variant="subtitle2"><StarIcon fontSize="small" /> {bull} {repo.count_of_stars}</Typography>
+                                    <Typography m={1} sx={{ display: "flex" }} variant="subtitle2"><CommitIcon fontSize="small" /> {bull} {repo.count_commits}</Typography>
+                                    <Typography m={1} sx={{ display: "flex" }} variant="subtitle2"><Groups3Icon fontSize="small" /> {bull} {repo.count_contributions}</Typography>
+
+                                    <Typography m={1} sx={{ display: "flex" }} variant="subtitle2"><TerminalIcon fontSize="small" /> {bull} {repo.primary_language_name}</Typography>
+
+                                    <Typography m={1} sx={{ display: "flex" }} variant="subtitle2"><LocalPoliceIcon fontSize="small" /> {bull} {repo.license_name}</Typography>
+                                    <Typography m={1} sx={{ display: "flex" }} variant="subtitle2"> Created {bull} {repo.repo_created_day}</Typography>
+                                </div>
+                            </Typography>
+                            <Typography variant="body2">
+                                {repo.repo_description}
+                                <br />
+                                '{repo.organization_bio}'
+                            </Typography>
+                        </CardContent>
+                        <CardActions>
+                            <Button size="small" href={repo.github_repo_url}>Learn More</Button>
+                        </CardActions>
+                    </Card>
                 )
             })}
         </Grid>
